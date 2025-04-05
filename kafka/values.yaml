@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: confluentinc/cp-kafka
+  tag: "5.5.0"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 9092
+
+# Override common values as needed for this chart
+environment:
+  name: dev
+  clusterId: "000000"
+  sdlcEnviroment: dev
+
+application:
+  type: Service
+  cmdb:
+    applicationID: KAFKA001
+    applicationName: "kafka"
+  environmentVariables:
+    APPLICATION_NAME: "kafka"

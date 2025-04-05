@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.fullname" . }}-kafka
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port | default 9092 }}
+      targetPort: {{ .Values.service.port | default 9092 }}
+      protocol: TCP
+      name: kafka
+  selector:
+    app: {{ include "common.fullname" . }}-kafka

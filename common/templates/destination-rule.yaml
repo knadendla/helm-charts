@@ -1,0 +1,34 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "common.fullname" . }}-dr
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  host: {{ include "common.fullname" . }}
+  {{- if and .Values.istio.jwt.enabled .Values.istio.mtls.enabled }}
+  subsets:
+    - name: jwt
+      labels:
+        version: jwt
+    - name: mtls
+      labels:
+        version: mtls
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+  {{- else if .Values.istio.jwt.enabled }}
+  subsets:
+    - name: jwt
+      labels:
+        version: jwt
+  {{- else if .Values.istio.mtls.enabled }}
+  subsets:
+    - name: mtls
+      labels:
+        version: mtls
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+  {{- end }}
+{{- end }}

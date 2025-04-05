@@ -1,0 +1,6 @@
+apiVersion: v2
+name: common
+description: A Helm chart library for shared templates, label standardization, and validations.
+version: 0.1.0
+type: library
+appVersion: "1.0.0"

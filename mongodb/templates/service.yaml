@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.fullname" . }}-mongo
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port | default 27017 }}
+      targetPort: {{ .Values.service.port | default 27017 }}
+      protocol: TCP
+      name: mongo
+  selector:
+    app: {{ include "common.fullname" . }}-mongo

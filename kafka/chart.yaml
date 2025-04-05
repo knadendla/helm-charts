@@ -1,0 +1,9 @@
+apiVersion: v2
+name: kafka
+description: A Helm chart for deploying a simple Kafka instance using the common library.
+version: 0.1.0
+appVersion: "2.8.0"
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: "file://../common"

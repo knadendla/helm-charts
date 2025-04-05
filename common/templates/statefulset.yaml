@@ -1,0 +1,56 @@
+{{- include "common.validation" . | indent 0 }}
+{{- if .Values.statefulset.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "common.fullname" . }}-statefulset
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  serviceName: {{ include "common.fullname" . }}-svc
+  replicas: {{ .Values.statefulset.replicas }}
+  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy | default "OrderedReady" | quote }}
+  updateStrategy:
+    type: {{ .Values.statefulset.updateStrategy.type | default "RollingUpdate" | quote }}
+  selector:
+    matchLabels:
+      app: {{ include "common.fullname" . }}
+  template:
+    metadata:
+      labels:
+        {{ include "common.standardLabels" . | indent 8 }}
+    spec:
+      containers:
+{{- range .Values.statefulset.containers }}
+        - name: {{ .name }}
+          image: "{{ $.Values.registry.url }}/{{ $.Values.registry.image.repository }}:{{ $.Values.registry.image.tag }}"
+          ports:
+{{- range .ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+{{- end }}
+          livenessProbe:
+{{ toYaml .livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .readinessProbe | indent 12 }}
+          resources:
+{{ toYaml .resources | indent 12 }}
+          volumeMounts:
+{{ toYaml .volumeMounts | indent 12 }}
+          env:
+{{ toYaml .env | indent 12 }}
+          securityContext:
+{{ toYaml .securityContext | indent 12 }}
+{{- end }}
+      initContainers:
+{{ toYaml .Values.statefulset.initContainers | indent 6 }}
+      volumes:
+{{ toYaml .Values.statefulset.volumes | indent 6 }}
+      nodeSelector:
+{{ toYaml .Values.statefulset.nodeSelector | indent 6 }}
+      affinity:
+{{ toYaml .Values.statefulset.affinity | indent 6 }}
+      tolerations:
+{{ toYaml .Values.statefulset.tolerations | indent 6 }}
+{{- end }}

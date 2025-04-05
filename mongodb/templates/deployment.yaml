@@ -1,0 +1,42 @@
+{{- include "common.validation" . | indent 0 }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.fullname" . }}-mongo
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "common.fullname" . }}-mongo
+  template:
+    metadata:
+      labels:
+        app: {{ include "common.fullname" . }}-mongo
+        {{ include "common.standardLabels" . | indent 8 }}
+    spec:
+      containers:
+        - name: mongo
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: {{ .Values.service.port | default 27017 }}
+              name: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.fullname" . }}-mongo-secret
+                  key: mongo-root-username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.fullname" . }}-mongo-secret
+                  key: mongo-root-password
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          emptyDir: {}

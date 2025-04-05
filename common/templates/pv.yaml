@@ -1,0 +1,17 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "common.fullname" . }}-pv
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size | quote }}
+  accessModes:
+    - {{ .Values.persistence.accessMode | quote }}
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  hostPath:
+    path: /mnt/data/{{ include "common.fullname" . }}
+{{- end }}

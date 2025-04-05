@@ -1,0 +1,21 @@
+{{- if and .Values.istio.enabled .Values.istio.jwt.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: {{ include "common.fullname" . }}-req-auth
+  labels:
+    {{ include "common.standardLabels" . | indent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "common.fullname" . }}
+  jwtRules:
+{{- range .Values.istio.jwt.issuers }}
+    - issuer: {{ .issuer | quote }}
+      jwksUri: {{ .jwksUri | quote }}
+      {{- if .audiences }}
+      audiences:
+{{ toYaml .audiences | indent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}
