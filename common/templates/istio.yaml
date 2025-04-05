@@ -1,4 +1,5 @@
 {{- if .Values.istio.enabled }}
+---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -7,28 +8,76 @@ metadata:
     {{ include "common.standardLabels" . | indent 4 }}
 spec:
   hosts:
-{{- range .Values.istio.virtualService.hosts }}
+  {{- range .Values.istio.virtualService.hosts }}
     - {{ . | quote }}
-{{- end }}
+  {{- end }}
   gateways:
-{{- range .Values.istio.virtualService.gateways }}
+  {{- range .Values.istio.virtualService.gateways }}
     - {{ . | quote }}
-{{- end }}
+  {{- end }}
   http:
-    - match:
-{{- if .Values.istio.virtualService.http.match }}
-{{ toYaml .Values.istio.virtualService.http.match | indent 6 }}
-{{- else }}
-      []
-{{- end }}
+  {{- if and .Values.istio.jwt.enabled .Values.istio.mtls.enabled }}
+    - name: "jwt-route"
+      match:
+        - headers:
+            authorization:
+              regex: "Bearer .*"
+      route:
+        - destination:
+            host: {{ include "common.fullname" . }}
+            subset: jwt
+            port:
+              number: {{ .Values.service.targetPort | default 80 }}
       retries:
         attempts: {{ .Values.istio.virtualService.http.retries.attempts }}
         perTryTimeout: {{ .Values.istio.virtualService.http.retries.perTryTimeout | quote }}
         retryOn: {{ .Values.istio.virtualService.http.retries.retryOn | quote }}
       timeout: {{ .Values.istio.virtualService.http.timeout | quote }}
+
+    - name: "mtls-route"
       route:
-      - destination:
-          host: {{ include "common.fullname" . }}
-          port:
-            number: {{ .Values.service.targetPort | default 80 }}
-{{- end }}
+        - destination:
+            host: {{ include "common.fullname" . }}
+            subset: mtls
+            port:
+              number: {{ .Values.service.targetPort | default 80 }}
+      retries:
+        attempts: {{ .Values.istio.virtualService.http.retries.attempts }}
+        perTryTimeout: {{ .Values.istio.virtualService.http.retries.perTryTimeout | quote }}
+        retryOn: {{ .Values.istio.virtualService.http.retries.retryOn | quote }}
+      timeout: {{ .Values.istio.virtualService.http.timeout | quote }}
+  {{- else if .Values.istio.jwt.enabled }}
+    - name: "jwt-route"
+      route:
+        - destination:
+            host: {{ include "common.fullname" . }}
+            subset: jwt
+            port:
+              number: {{ .Values.service.targetPort | default 80 }}
+      retries:
+        attempts: {{ .Values.istio.virtualService.http.retries.attempts }}
+        perTryTimeout: {{ .Values.istio.virtualService.http.retries.perTryTimeout | quote }}
+        retryOn: {{ .Values.istio.virtualService.http.retries.retryOn | quote }}
+      timeout: {{ .Values.istio.virtualService.http.timeout | quote }}
+  {{- else if .Values.istio.mtls.enabled }}
+    - name: "mtls-route"
+      route:
+        - destination:
+            host: {{ include "common.fullname" . }}
+            subset: mtls
+            port:
+              number: {{ .Values.service.targetPort | default 80 }}
+      retries:
+        attempts: {{ .Values.istio.virtualService.http.retries.attempts }}
+        perTryTimeout: {{ .Values.istio.virtualService.http.retries.perTryTimeout | quote }}
+        retryOn: {{ .Values.istio.virtualService.http.retries.retryOn | quote }}
+      timeout: {{ .Values.istio.virtualService.http.timeout | quote }}
+  {{- else }}
+    - route:
+        - destination:
+            host: {{ include "common.fullname" . }}
+            port:
+              number: {{ .Values.service.targetPort | default 80 }}
+  {{- end }}
+
+

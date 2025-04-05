@@ -131,7 +131,6 @@ configMap:
   files: {}
 
 secrets:
-  enabled: true
   # Preferred: External Secret Manager (e.g., AWS Secrets Manager, GCP Secret Manager, etc.)
   secretmanager:
     enabled: false             # Enable external Secret Manager integration
