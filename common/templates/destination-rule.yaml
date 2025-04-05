@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: {{ include "common.fullname" . }}-dr
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
 spec:
   host: {{ include "common.fullname" . }}
   {{- if and .Values.istio.jwt.enabled .Values.istio.mtls.enabled }}
@@ -31,4 +31,4 @@ spec:
         tls:
           mode: ISTIO_MUTUAL
   {{- end }}
-{{- end }}
+

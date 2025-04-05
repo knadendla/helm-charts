@@ -1,25 +1,28 @@
-{{- include "common.validation" . | indent 0 }}
+{{- define "common.deployment" -}}
+
+{{- include "common.validation" . -}}
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "common.fullname" . }}-deployment
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.deployment.replicas }}
+  replicas: {{ default 1 .Values.deployment.replicas }}
   selector:
     matchLabels:
       app: {{ include "common.fullname" . }}
   template:
     metadata:
       labels:
-        {{ include "common.standardLabels" . | indent 8 }}
+{{ include "common.standardLabels" . | nindent 8 }}
     spec:
       containers:
 {{- range .Values.deployment.containers }}
         - name: {{ .name }}
           image: "{{ $.Values.registry.url }}/{{ $.Values.registry.image.repository }}:{{ $.Values.registry.image.tag }}"
+          imagePullPolicy: {{ $.Values.registry.pullPolicy }}
           ports:
 {{- range .ports }}
             - name: {{ .name }}
@@ -27,25 +30,50 @@ spec:
               protocol: {{ .protocol }}
 {{- end }}
           livenessProbe:
-{{ toYaml .livenessProbe | indent 12 }}
+{{ toYaml .livenessProbe | nindent 12 }}
           readinessProbe:
-{{ toYaml .readinessProbe | indent 12 }}
+{{ toYaml .readinessProbe | nindent 12 }}
           resources:
-{{ toYaml .resources | indent 12 }}
+{{ toYaml .resources | nindent 12 }}
           volumeMounts:
-{{ toYaml .volumeMounts | indent 12 }}
+{{ toYaml .volumeMounts | nindent 12 }}
           env:
-{{ toYaml .env | indent 12 }}
+{{ toYaml .env | nindent 12 }}
           securityContext:
-{{ toYaml .securityContext | indent 12 }}
+{{ toYaml .securityContext | nindent 12 }}
 {{- end }}
+      {{- if .Values.deployment.initContainers }}
       initContainers:
-{{ toYaml .Values.deployment.initContainers | indent 6 }}
+      {{ toYaml .Values.deployment.initContainers | nindent 6 }}
+      {{- else }}
+      initContainers: []
+      {{- end }}
+
+      {{- if .Values.deployment.volumes }}
       volumes:
-{{ toYaml .Values.deployment.volumes | indent 6 }}
+      {{ toYaml .Values.deployment.volumes | nindent 6 }}
+      {{- else }}
+      volumes: []
+      {{- end }}
+
+      {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.deployment.nodeSelector | indent 6 }}
+      {{ toYaml .Values.deployment.nodeSelector | nindent 6 }}
+      {{- else }}
+      nodeSelector: []
+      {{- end }}
+
+      {{- if .Values.deployment.affinity }}
       affinity:
-{{ toYaml .Values.deployment.affinity | indent 6 }}
+      {{ toYaml .Values.deployment.affinity | nindent 6 }}
+      {{- else }}
+      affinity: []
+      {{- end }}
+      {{- if .Values.deployment.tolerations }}
       tolerations:
-{{ toYaml .Values.deployment.tolerations | indent 6 }}
+      {{ toYaml .Values.deployment.tolerations | nindent 6 }}
+      {{- else }}
+      tolerations: []
+      {{- end }}
+
+{{- end }}

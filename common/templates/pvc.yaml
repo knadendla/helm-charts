@@ -4,7 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ include "common.fullname" . }}-pvc
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
   {{- if .Values.persistence.annotations }}
   annotations:
 {{ toYaml .Values.persistence.annotations | nindent 4 }}

@@ -1,7 +1,7 @@
 environment:
   name: dev
-  clusterId: "000000"
-  sdlcEnviroment: dev
+  sdlcEnv: dev
+  clusterId: "111"
 
 application:
   type: Service
@@ -164,6 +164,7 @@ secrets:
 
 
 certificate:
+  enabled: false  
   dnsNames:
     - "myapp.example.com"
     - "www.myapp.example.com"
@@ -249,7 +250,3 @@ istio:
       timeout: "15s"
 
 
-serviceAccount:
-  create: false
-  name: ""
-  annotations: {}

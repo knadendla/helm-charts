@@ -1,0 +1,24 @@
+# Ignore Helm chart packages
+*.tgz
+
+# Ignore Helm repository index files
+index.yaml
+
+# Ignore build artifacts and temporary files
+build/
+dist/
+tmp/
+
+# Ignore local system files
+.DS_Store
+*.swp
+
+# Ignore IDE settings (optional)
+.vscode/
+.idea/
+
+# Optionally ignore charts directory if dependencies are managed externally
+charts/
+
+# Ignore secret files or local configuration if needed
+*.env

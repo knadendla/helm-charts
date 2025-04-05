@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: {{ include "common.fullname" . }}-ingress
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
   annotations:
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}

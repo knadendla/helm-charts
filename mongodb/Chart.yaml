@@ -1,8 +1,9 @@
 apiVersion: v2
 name: mongodb
-description: A Helm chart for deploying a simple MongoDB instance using the common library.
+description: A Helm chart for MongoDB
+type: application
 version: 0.1.0
-appVersion: "4.4"
+appVersion: "6.0"
 dependencies:
   - name: common
     version: "0.1.0"

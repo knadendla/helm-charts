@@ -4,7 +4,7 @@ kind: PersistentVolume
 metadata:
   name: {{ include "common.fullname" . }}-pv
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
 spec:
   capacity:
     storage: {{ .Values.persistence.size | quote }}

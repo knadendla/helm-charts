@@ -5,7 +5,7 @@ kind: StatefulSet
 metadata:
   name: {{ include "common.fullname" . }}-statefulset
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
 spec:
   serviceName: {{ include "common.fullname" . }}-svc
   replicas: {{ .Values.statefulset.replicas }}

@@ -4,7 +4,7 @@ kind: AuthorizationPolicy
 metadata:
   name: {{ include "common.fullname" . }}-authz
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -12,9 +12,9 @@ spec:
   action: ALLOW
   rules:
   - when:
-    - key: request.auth.claims[iss]
-      values:
+      - key: request.auth.claims[iss]
+        values:
 {{- range .Values.istio.jwt.issuers }}
-      - {{ .issuer | quote }}
+{{ printf "- %s" (.issuer | quote) | nindent 10 }}
 {{- end }}
 {{- end }}

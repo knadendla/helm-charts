@@ -1,46 +1,43 @@
-{{- if or .Values.certificate.venafi.enabled .Values.certificate.acm.enabled .Values.certificate.appviewx.enabled }}
+{{- if and (hasKey .Values "certificate") .Values.certificate.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ include "common.fullname" . }}-cert
   labels:
-    {{ include "common.standardLabels" . | indent 4 }}
+{{ include "common.standardLabels" . | indent 4 }}
 spec:
-  # Determine the secret name based on the provider enabled
   secretName: {{- if .Values.certificate.venafi.enabled -}}
-                {{ .Values.certificate.venafi.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
-              {{- else if .Values.certificate.acm.enabled -}}
-                {{ .Values.certificate.acm.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
-              {{- else if .Values.certificate.appviewx.enabled -}}
-                {{ .Values.certificate.appviewx.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
-              {{- else -}}
-                {{ default (printf "%s-tls" (include "common.fullname" .)) .Values.certificate.secretName | quote }}
-              {{- end }}
-  # Select the issuer name and kind based on the provider enabled
+    {{ .Values.certificate.venafi.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
+  {{- else if .Values.certificate.acm.enabled -}}
+    {{ .Values.certificate.acm.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
+  {{- else if .Values.certificate.appviewx.enabled -}}
+    {{ .Values.certificate.appviewx.secretName | default (printf "%s-tls" (include "common.fullname" .)) | quote }}
+  {{- else -}}
+    {{ default (printf "%s-tls" (include "common.fullname" .)) .Values.certificate.secretName | quote }}
+  {{- end }}
   issuerRef:
     name: {{- if .Values.certificate.venafi.enabled -}}
-             {{ .Values.certificate.venafi.issuerName | default "default-venafi-issuer" | quote }}
-           {{- else if .Values.certificate.acm.enabled -}}
-             {{ .Values.certificate.acm.issuerName | default "default-acm-issuer" | quote }}
-           {{- else if .Values.certificate.appviewx.enabled -}}
-             {{ .Values.certificate.appviewx.issuerName | default "default-appviewx-issuer" | quote }}
-           {{- else -}}
-             {{ default "default-issuer" .Values.certificate.issuerName | quote }}
-           {{- end }}
+      {{ .Values.certificate.venafi.issuerName | default "default-venafi-issuer" | quote }}
+    {{- else if .Values.certificate.acm.enabled -}}
+      {{ .Values.certificate.acm.issuerName | default "default-acm-issuer" | quote }}
+    {{- else if .Values.certificate.appviewx.enabled -}}
+      {{ .Values.certificate.appviewx.issuerName | default "default-appviewx-issuer" | quote }}
+    {{- else -}}
+      {{ default "default-issuer" .Values.certificate.issuerName | quote }}
+    {{- end }}
     kind: {{- if .Values.certificate.venafi.enabled -}}
-            "VenafiIssuer"
-          {{- else if .Values.certificate.acm.enabled -}}
-            "ACMIssuer"
-          {{- else if .Values.certificate.appviewx.enabled -}}
-            "AppViewXIssuer"
-          {{- else -}}
-            "ClusterIssuer"
-          {{- end | quote }}
+      {{ "VenafiIssuer" | quote }}
+    {{- else if .Values.certificate.acm.enabled -}}
+      {{ "ACMIssuer" | quote }}
+    {{- else if .Values.certificate.appviewx.enabled -}}
+      {{ "AppViewXIssuer" | quote }}
+    {{- else -}}
+      {{ "ClusterIssuer" | quote }}
+    {{- end }}
   dnsNames:
 {{- range .Values.certificate.dnsNames }}
     - {{ . | quote }}
 {{- end }}
-
 {{- if .Values.certificate.venafi.enabled }}
 venafi:
   zone: {{ .Values.certificate.venafi.zone | quote }}
@@ -49,12 +46,10 @@ venafi:
     credentialsRef:
       name: {{ .Values.certificate.venafi.credentialsRef | quote }}
 {{- end }}
-
 {{- if .Values.certificate.acm.enabled }}
 acm:
   region: {{ .Values.certificate.acm.region | quote }}
 {{- end }}
-
 {{- if .Values.certificate.appviewx.enabled }}
 appviewx:
   apiUrl: {{ .Values.certificate.appviewx.apiUrl | quote }}
