@@ -1,0 +1,33 @@
+replicaCount: 1
+
+image:
+  repository: myrepo/springboot-app
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+environment: "prod"
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations: {}
+  hosts:
+    - host: springboot-app.example.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - springboot-app.example.com
+      secretName: springboot-app-tls
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
