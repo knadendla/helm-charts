@@ -1,0 +1,6 @@
+dependencies:
+- name: dummy
+  repository: file://../dummy
+  version: 0.1.0
+digest: sha256:094023cbc1f2db764e9d8d18be10324b6c8e4bf245a0c3a88c04422b8617fa20
+generated: "2025-04-05T19:13:00.111651-04:00"

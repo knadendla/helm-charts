@@ -1,3 +1,5 @@
+{{- define "common.cronjob" -}}
+
 {{- if .Values.cronjob }}
 
   {{- if (default false .Values.cronjob.enabled) }}
@@ -30,4 +32,5 @@
                 args: {{ toYaml .Values.cronjob.args | nindent 14 }}
   {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}

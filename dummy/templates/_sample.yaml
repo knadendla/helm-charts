@@ -1,0 +1,10 @@
+{{- define "dummy.sample" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dummy.fullname" . }}-sample
+  labels:
+{{ include "dummy.standardLabels" . | nindent 2 }}
+data:
+  message: "Hello from dummy sample"
+{{- end -}}

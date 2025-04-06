@@ -1,3 +1,5 @@
+{{- define "common.destination-rule" -}}
+
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:

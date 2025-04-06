@@ -1,3 +1,5 @@
+{{- define "common.statefulset" -}}
+
 {{- include "common.validation" . | indent 0 }}
 {{- if .Values.statefulset.enabled }}
 apiVersion: apps/v1
@@ -53,4 +55,5 @@ spec:
 {{ toYaml .Values.statefulset.affinity | indent 6 }}
       tolerations:
 {{ toYaml .Values.statefulset.tolerations | indent 6 }}
+{{- end }}
 {{- end }}

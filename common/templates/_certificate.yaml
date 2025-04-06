@@ -1,3 +1,5 @@
+{{- define "common.certificate" -}}
+
 {{- if and (hasKey .Values "certificate") .Values.certificate.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -56,4 +58,6 @@ appviewx:
   credentialsRef:
     name: {{ .Values.certificate.appviewx.credentialsRef | quote }}
 {{- end }}
+{{- end }}
+
 {{- end }}

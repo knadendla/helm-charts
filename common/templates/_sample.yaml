@@ -1,0 +1,8 @@
+{{- define "common.sample" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" . }}-sample
+data:
+  message: "Hello from common.sample"
+{{- end }}

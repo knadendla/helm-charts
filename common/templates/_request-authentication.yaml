@@ -1,3 +1,5 @@
+{{- define "common.request-authentication" -}}
+
 {{- if and .Values.istio.enabled .Values.istio.jwt.enabled }}
 apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
@@ -17,5 +19,6 @@ spec:
       audiences:
 {{ toYaml .audiences | indent 8 }}
       {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
