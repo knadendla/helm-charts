@@ -4,8 +4,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
   name: {{ include "common.fullname" . }}-dr
-  labels:
-{{ include "common.standardLabels" . | indent 4 }}
+  labels: {{ include "common.standardLabels" . | indent 4 }}
 spec:
   host: {{ include "common.fullname" . }}
   {{- if and .Values.istio.jwt.enabled .Values.istio.mtls.enabled }}
@@ -34,3 +33,4 @@ spec:
           mode: ISTIO_MUTUAL
   {{- end }}
 
+  {{- end }}

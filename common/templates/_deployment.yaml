@@ -6,8 +6,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "common.fullname" . }}-deployment
-  labels:
-{{ include "common.standardLabels" . | nindent 4 }}
+  labels: {{ include "common.standardLabels" . | nindent 4 }}
 spec:
   replicas: {{ default 1 .Values.deployment.replicas }}
   selector:
@@ -15,8 +14,7 @@ spec:
       app: {{ include "common.fullname" . }}
   template:
     metadata:
-      labels:
-{{ include "common.standardLabels" . | nindent 8 }}
+      labels: {{ include "common.standardLabels" . | nindent 8 }}
     spec:
       containers:
 {{- range .Values.deployment.containers }}
@@ -24,56 +22,43 @@ spec:
           image: "{{ $.Values.registry.url }}/{{ $.Values.registry.image.repository }}:{{ $.Values.registry.image.tag }}"
           imagePullPolicy: {{ $.Values.registry.pullPolicy }}
           ports:
-{{- range .ports }}
+          {{- range .ports }}
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
-{{- end }}
-          livenessProbe:
-{{ toYaml .livenessProbe | nindent 12 }}
-          readinessProbe:
-{{ toYaml .readinessProbe | nindent 12 }}
-          resources:
-{{ toYaml .resources | nindent 12 }}
-          volumeMounts:
-{{ toYaml .volumeMounts | nindent 12 }}
-          env:
-{{ toYaml .env | nindent 12 }}
-          securityContext:
-{{ toYaml .securityContext | nindent 12 }}
+          {{- end }}
+          livenessProbe: {{ toYaml .livenessProbe | nindent 12 }}
+          readinessProbe: {{ toYaml .readinessProbe | nindent 12 }}
+          resources: {{ toYaml .resources | nindent 12 }}
+          {{- if .volumeMounts }}
+          volumeMounts: {{ toYaml .volumeMounts | default ""  |  nindent 12 }}
+          {{- end }}
+          {{- if .env }}
+          env: {{ toYaml .env | default ""  | nindent 12 }}
+          {{- end }}
+          {{- if .securityContext }}
+          securityContext: {{ toYaml .securityContext  | nindent 12 }}
+          {{- end }}
 {{- end }}
       {{- if .Values.deployment.initContainers }}
-      initContainers:
-      {{ toYaml .Values.deployment.initContainers | nindent 6 }}
-      {{- else }}
-      initContainers: []
+      initContainers: {{ toYaml .Values.deployment.initContainers | nindent 6 }}
       {{- end }}
-
       {{- if .Values.deployment.volumes }}
-      volumes:
-      {{ toYaml .Values.deployment.volumes | nindent 6 }}
-      {{- else }}
-      volumes: []
+      volumes: {{ toYaml .Values.deployment.volumes | nindent 6 }}
       {{- end }}
 
       {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
       {{ toYaml .Values.deployment.nodeSelector | nindent 6 }}
-      {{- else }}
-      nodeSelector: []
       {{- end }}
 
       {{- if .Values.deployment.affinity }}
       affinity:
       {{ toYaml .Values.deployment.affinity | nindent 6 }}
-      {{- else }}
-      affinity: []
       {{- end }}
       {{- if .Values.deployment.tolerations }}
       tolerations:
       {{ toYaml .Values.deployment.tolerations | nindent 6 }}
-      {{- else }}
-      tolerations: []
       {{- end }}
 
 {{- end }}

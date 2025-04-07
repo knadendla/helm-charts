@@ -1,16 +1,7 @@
-# MongoDB-specific configuration
-
-image:
-  repository: mongo
-  tag: "4.4.6"
-  pullPolicy: IfNotPresent
-
-service:
-  port: 27017
-
-environment: 
+environment:
   name: dev
-  sdlc:  dev
+  sdlc: dev
+
 application:
   type: Database
   cmdb:
@@ -19,14 +10,25 @@ application:
   environmentVariables:
     APPLICATION_NAME: "mongodb"
 
+registry:
+  url: "docker.io"
+  image:
+    repository: "mongo"
+    tag: "6.0"
+    imagePullSecrets: []
+  pullPolicy: IfNotPresent
+
 deployment:
-  replicas: 1                     # Replica count is now defined under the deployment section
+  replicas: 1
   containers:
     - name: mongo
       ports:
         - name: mongo
           containerPort: 27017
           protocol: TCP
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsUser: 1000
       livenessProbe:
         tcpSocket:
           port: mongo
@@ -44,16 +46,29 @@ deployment:
         limits:
           memory: "256Mi"
           cpu: "200m"
-      volumeMounts: []
+      volumeMounts:
+        - name: data
+          mountPath: /data/db
       env: []
   initContainers: []
-  volumes: []
+  # Define a volume that uses the PVC created by the persistence block
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: mongodb-pvc
   nodeSelector: {}
   affinity: {}
-  tolerations: []
+  tolerations: {}
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 27017
+  targetPort: 27017
+  protocol: TCP
 
 persistence:
-  enabled: false
+  enabled: true
   mountPath: /data/db
   accessMode: ReadWriteOnce
   size: 1Gi

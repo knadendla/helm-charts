@@ -16,7 +16,5 @@ Usage: {{ include "common.validation" . }}
   {{ fail "Value 'environment.name' is required" }}
 {{- end }}
 
-{{- if not .Values.environment.clusterId }}
-  {{ fail "Value 'environment.clusterId' is required" }}
-{{- end }}
+
 {{- end -}}
