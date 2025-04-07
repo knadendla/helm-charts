@@ -12,9 +12,16 @@ Usage: {{ include "common.validation" . }}
   {{ fail "Value 'application.cmdb.applicationName' is required" }}
 {{- end }}
 
-{{- if not .Values.environment.name }}
-  {{ fail "Value 'environment.name' is required" }}
+{{- if not .Values.environment }}
+  {{ fail "Value 'environment' is required" }}
 {{- end }}
 
+{{- if not .Values.sdlcEnvironment }}
+  {{ fail "Value 'sdlcEnvironment' is required" }}
+{{- end }}
+
+{{- if not .Values.clusterName }}
+  {{ fail "Value 'clusterName' is required" }}
+{{- end }}
 
 {{- end -}}

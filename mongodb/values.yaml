@@ -1,12 +1,14 @@
-environment:
-  name: dev
-  sdlc: dev
+
+environment: dev
+sdlcEnvironment: dev
+clusterName: sample
 
 application:
   type: Database
   cmdb:
     applicationID: MONGO001
     applicationName: "mongodb"
+    applicationVersion: "1.0"
   environmentVariables:
     APPLICATION_NAME: "mongodb"
 

@@ -6,15 +6,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "common.fullname" . }}-deployment
-  labels: {{ include "common.standardLabels" . | nindent 4 }}
+  labels: {{ include "common.combinedLabels" . | nindent 4 }}
 spec:
   replicas: {{ default 1 .Values.deployment.replicas }}
   selector:
-    matchLabels:
-      app: {{ include "common.fullname" . }}
+    matchLabels: {{ include "common.combinedAppLabels" . | nindent 8 }}
   template:
     metadata:
-      labels: {{ include "common.standardLabels" . | nindent 8 }}
+      labels: {{ include "common.combinedLabels" . | nindent 8 }}
     spec:
       containers:
 {{- range .Values.deployment.containers }}
